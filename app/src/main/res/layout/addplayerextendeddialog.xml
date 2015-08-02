@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="350dp"
+    android:orientation="vertical" >
+    
+    <ListView
+		 android:id="@+id/lvPlayersList"
+		 android:layout_width="match_parent"	
+		 android:layout_height="200dp"
+		 android:background="@drawable/background1"
+		 android:layout_margin="5dp"
+		 >
+		</ListView>
+		
+    <LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+        android:minHeight="50dp"
+        android:weightSum="100">
+
+        <Button
+            android:id="@+id/btnSelectAllPlayers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:text="Select all" />
+
+        <Button
+            android:id="@+id/btnDeselectAllPlayers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:text="Deselect all" />
+    
+        </LinearLayout>
+		
+    <LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+        android:minHeight="50dp"
+        android:weightSum="100">
+
+        <EditText
+            android:id="@+id/etNewPlayerName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="80"
+            android:ems="10" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/btnAddNewPlayer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="20"
+            android:text="Add" />
+    
+        </LinearLayout>
+    <Button 
+        android:id="@+id/btnAddingDone"
+        android:layout_width="match_parent"  
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
+        android:text="Done"
+        >        
+    </Button>
+
+</LinearLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Kicker</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="sb_title">Tournament</string>
+    <string name="initial_title">Prepare tournament screen</string> 
+    <string name="tvPlayers">List of players: </string>   
+    
+    <string name="btnAddPlr">Add player</string>
+    <string name="btnClrPlr">Clear Player List</string> 
+    <string name="btnStartTrnmt">Start Tournament</string>
+    
+    <string name="tvDlgAddPlayer">Enter player name:</string>
+    <string name="btnDlgAddPlayer">Add</string>
+    <string name="btnDlgCancel">Cancel</string>
+ 
+</resources>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	 xmlns:android="http://schemas.android.com/apk/res/android"
+	 android:layout_width="match_parent"
+	 android:layout_height="match_parent"
+	 android:background="#11aa0000"
+	 android:orientation="vertical">
+		<TextView
+		 android:layout_width="wrap_content"
+		 android:layout_height="wrap_content"
+		 android:layout_gravity="center_horizontal"
+		 android:textSize="20dp"
+		 android:text="@string/initial_title">
+		</TextView>
+
+		<TextView
+		    android:id="@+id/tvPlayersList"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/tvPlayers" />
+
+		<Button
+		    android:id="@+id/addPlayerButton"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="Alter players"/>
+
+		<CheckBox
+		    android:id="@+id/onlineTournamentCheckbox"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="Recount tournament online" />
+
+		<Button
+		    android:id="@+id/startTournamentButton"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/btnStartTrnmt" />
+		<Button
+		    android:id="@+id/continueTournamentButton"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="Continue tournament" />
+		
+</LinearLayout><!-- From: file:/C:/Users/Lena/StudioProjects/KickerNewAge/app/src/main/res/layout/initial.xml -->

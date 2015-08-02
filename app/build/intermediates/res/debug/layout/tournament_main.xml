@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <Button
+        android:id="@+id/btnNewTournament"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"        
+        android:minHeight="80dp"
+        android:layout_marginBottom="3dp"
+        android:background="@drawable/button_bar_bg"
+        android:text="Start new tournament" />
+    
+    <Button
+        android:id="@+id/btnOldTournaments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="80dp"
+        android:layout_marginBottom="10dp"        
+        android:background="@drawable/button_bar_bg"
+        android:text="Old tournaments" />
+
+    <TextView
+        android:id="@+id/tvActiveTournaments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
+        android:minHeight="30dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:background="@drawable/button_bar_bg"
+        android:text="Active tournaments" />
+
+    <ListView
+		 android:id="@+id/lvActiveTournaments"
+		 android:layout_width="match_parent"
+		 android:layout_height="wrap_content"	
+		 >
+		</ListView>
+    
+</LinearLayout>
+<!-- From: file:/C:/Users/Lena/StudioProjects/KickerNewAge/app/src/main/res/layout/tournament_main.xml -->

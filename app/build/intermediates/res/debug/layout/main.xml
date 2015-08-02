@@ -1,0 +1,30 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main_layout"
+    tools:context="${relativePackage}.${activityClass}" >
+
+	<FrameLayout
+		 android:id="@+id/frInitial"
+		 android:layout_width="match_parent"
+		 android:layout_height="match_parent">
+		</FrameLayout>
+	<FrameLayout
+		 android:id="@+id/frTournament"
+		 android:layout_width="match_parent"
+		 android:layout_height="match_parent">
+		</FrameLayout>
+	<FrameLayout
+		 android:id="@+id/frOldTournament"
+		 android:layout_width="match_parent"
+		 android:layout_height="match_parent">
+		</FrameLayout>
+    <FrameLayout
+		 android:id="@+id/frScoreboard"
+		 android:layout_width="match_parent"
+		 android:layout_height="match_parent">  
+		</FrameLayout>
+
+</RelativeLayout>
+<!-- From: file:/C:/Users/Lena/StudioProjects/KickerNewAge/app/src/main/res/layout/main.xml -->

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<LinearLayout
+	 xmlns:android="http://schemas.android.com/apk/res/android"
+	 android:layout_width="match_parent"
+	 android:layout_height="wrap_content"
+	 android:orientation="horizontal"
+	 android:weightSum="100">	       
+	    
+	<TextView
+	 android:id="@+id/tvResultsPlayer"
+	 android:layout_height="wrap_content"
+	 android:layout_gravity="center_vertical"
+	 android:text="Player1"
+	 android:layout_width="0dp"
+	 android:layout_weight="28"
+	 android:paddingLeft="6dp"
+	 android:paddingRight="6dp"
+	 android:paddingTop="2dp"
+	 android:paddingBottom="2dp"
+	 android:background="@drawable/background3"
+	 android:textSize="18sp"
+	 android:maxHeight="30dp"
+	 android:tag="ResultsPlayer"	 >
+	</TextView>	
+	
+	<TextView
+	 android:id="@+id/tvResultsScores"
+	 android:gravity="center"
+	 android:textSize="16sp"
+	 android:background="@drawable/background3"
+	 android:layout_height="match_parent"
+	 android:text="10"
+	 android:layout_width="0dp"
+	 android:layout_weight="9"
+	 android:maxHeight="30dp"
+	 android:tag="ResultsScores"	 >
+	</TextView>	
+	
+	<TextView
+	 android:id="@+id/tvResultsGames"
+	 android:gravity="center"
+	 android:textSize="16sp"
+	 android:layout_width="0dp"
+	 android:layout_weight="9"
+	 android:background="@drawable/background3"
+	 android:layout_height="match_parent"
+	 android:maxHeight="30dp"
+	 android:tag="ResultsGames"	 >
+	</TextView>	
+	
+	<TextView
+	 android:id="@+id/tvResultsWon"
+	 android:gravity="center"
+	 android:textSize="16sp"
+	 android:layout_width="0dp"
+	 android:layout_weight="9"
+	 android:background="@drawable/background3"
+	 android:layout_height="match_parent"
+	 android:maxHeight="30dp"
+	 android:tag="ResultsWon"	 >
+	</TextView>	
+	
+	<TextView
+	 android:id="@+id/tvResultsLost"
+	 android:gravity="center"
+	 android:textSize="16sp"
+	 android:layout_width="0dp"
+	 android:layout_weight="9"
+	 android:background="@drawable/background3"
+	 android:layout_height="match_parent"
+	 android:maxHeight="30dp"
+	 android:tag="ResultsLost"	 >
+	</TextView>	
+	
+	<TextView
+	 android:id="@+id/tvResultsDraw"
+	 android:gravity="center"
+	 android:textSize="16sp"
+	 android:layout_width="0dp"
+	 android:layout_weight="9"
+	 android:background="@drawable/background3"
+	 android:layout_height="match_parent"
+	 android:maxHeight="30dp"
+	 android:tag="ResultsDraw"	 >
+	</TextView>	
+	
+	<TextView
+	 android:id="@+id/tvResultsGoals"
+	 android:gravity="center"
+	 android:textSize="16sp"
+	 android:layout_width="0dp"
+	 android:layout_weight="9"
+	 android:background="@drawable/background3"
+	 android:layout_height="match_parent"
+	 android:maxHeight="30dp"
+	 android:tag="ResultsGoals"	 >
+	</TextView>	
+	
+	<TextView
+	 android:id="@+id/tvResultsMissed"
+	 android:gravity="center"
+	 android:textSize="16sp"
+	 android:layout_width="0dp"
+	 android:layout_weight="9"
+	 android:background="@drawable/background3"
+	 android:layout_height="match_parent"
+	 android:maxHeight="30dp"
+	 android:tag="ResultsMissed"	 >
+	</TextView>	
+	
+	<TextView
+	 android:id="@+id/tvResultsDelta"
+	 android:gravity="center"
+	 android:textSize="16sp"
+	 android:layout_width="0dp"
+	 android:layout_weight="9"
+	 android:background="@drawable/background3"
+	 android:layout_height="match_parent"
+	 android:maxHeight="30dp"
+	 android:tag="ResultsDelta"	 >
+	</TextView>	
+	
+</LinearLayout>
+

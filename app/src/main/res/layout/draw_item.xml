@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<LinearLayout
+	 xmlns:android="http://schemas.android.com/apk/res/android"
+	 android:layout_width="match_parent"
+	 android:layout_height="wrap_content"
+	 android:orientation="horizontal"
+	 android:weightSum="100"
+	 android:paddingLeft="6dp"
+	 android:paddingRight="6dp"
+	 android:paddingTop="2dp"
+	 android:paddingBottom="2dp">	       
+	    
+	<TextView
+	 android:id="@+id/tvDrawPlayer1"
+	 android:layout_height="wrap_content"
+	 android:layout_gravity="center_vertical"
+	 android:text=""
+	 android:layout_width="0dp"
+	 android:layout_weight="40"
+	 android:paddingLeft="6dp"
+	 android:paddingRight="6dp"
+	 android:paddingTop="2dp"
+	 android:paddingBottom="2dp"
+	 android:background="@drawable/background2"
+	 android:textSize="18sp"
+	 android:maxHeight="30dp"
+	 android:tag="Player1"	 >
+	</TextView>	
+	
+	<EditText 
+	     android:id="@+id/etPlayer1Score"
+		 android:layout_height="wrap_content"
+		 android:layout_gravity="center"
+		 android:layout_marginLeft="10dp"
+		 android:layout_width="0dp"
+		 android:layout_weight="10"
+		 android:textSize="14sp"
+		 android:padding="6dp"
+		 android:inputType="number|textNoSuggestions"
+		 android:background="@drawable/background1"	 		 
+	    >
+	</EditText >
+	<EditText  
+	     android:id="@+id/etPlayer2Score"
+		 android:layout_height="wrap_content"
+		 android:layout_gravity="center_horizontal"
+		 android:layout_marginLeft="10dp"
+		 android:layout_width="0dp"
+		 android:layout_weight="10"
+		 android:textSize="14sp"
+		 android:padding="6dp"
+		 android:background="@drawable/background1"		 
+		 android:inputType="number|textNoSuggestions"
+	    >
+	</EditText >
+	
+	
+	
+	<TextView
+	 android:id="@+id/tvDrawPlayer2"
+	 android:layout_height="wrap_content"
+	 android:layout_gravity="center_vertical"
+	 android:layout_marginLeft="10dp"
+	 android:text=""
+	 android:layout_width="0dp"
+	 android:layout_weight="40"
+	 android:paddingLeft="6dp"
+	 android:paddingRight="6dp"
+	 android:paddingTop="2dp"
+	 android:paddingBottom="2dp"
+	 android:background="@drawable/background2"
+	 android:textSize="18sp"
+	 android:maxHeight="30dp"
+	 android:tag="Player2"	 >
+	</TextView>
+</LinearLayout>
