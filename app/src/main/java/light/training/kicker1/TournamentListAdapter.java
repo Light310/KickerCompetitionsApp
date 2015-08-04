@@ -76,7 +76,15 @@ public class TournamentListAdapter extends SimpleCursorAdapter {
 		else Log.d(LOG_TAG,"TLA No rows in tournament?!");
 		this.notifyDataSetChanged();
 	}
- 
+
+	@Override
+	public Cursor swapCursor(Cursor c) {
+		Log.d(LOG_TAG,"TLA. swapCursor overrided.");
+		cursor = super.swapCursor(c);
+		updateList();
+		return cursor;
+	}
+
  public View getView(int position, View convertView, ViewGroup parent) {
 	    // используем созданные, но не используемые view	   
 	 	final trnm _trnm;

@@ -103,7 +103,7 @@ public class TournamentMainFragment extends Fragment implements LoaderCallbacks<
 		  Log.d(LOG_TAG,"onLoadFinished. id: "+loader.getId());
 		  trnmAdapterActive.swapCursor(cursor);
 		  Log.d(LOG_TAG,"On Load Finished cursor count: "+cursor.getCount());
-		  trnmAdapterActive.updateList();
+		  //trnmAdapterActive.updateList();
 	  }
 
 	  @Override
