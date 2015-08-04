@@ -115,6 +115,8 @@ public class DB {
 
 	    @Override
 	    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			//here should be some upgrade text
+			Log.d(LOG_TAG,"DB onUpgrade. Old version = "+oldVersion+". New version = "+newVersion);
 	    }
 	  }
 	  
