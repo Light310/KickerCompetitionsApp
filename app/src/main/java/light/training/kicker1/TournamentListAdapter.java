@@ -32,7 +32,7 @@ public class TournamentListAdapter extends SimpleCursorAdapter {
 	 c = _cursor;
      activity = (MainActivity) ctx;     
      db = activity.db;
-     
+     /*
      cursor = getCursor();
 	 count = cursor.getCount();
 	 Log.d(LOG_TAG,"TLA Cursor count = "+count);
@@ -50,11 +50,32 @@ public class TournamentListAdapter extends SimpleCursorAdapter {
 			while (cursor.moveToNext());			
 		}
 		else Log.d(LOG_TAG,"TLA No rows in tournament?!");
-     	//cursor.close();
+     	*/
      //this.notifyDataSetChanged();
      
      
- } 
+ }
+
+	public void updateList() {
+		cursor = getCursor();
+		count = cursor.getCount();
+		Log.d(LOG_TAG,"TLA Cursor count = "+count);
+
+		arrButton = new String[count];
+		arrId = new int[count];
+		arrName = new String[count];
+
+		if (cursor.moveToFirst()) {
+			int idColIndex = cursor.getColumnIndex("id");
+			do {
+				arrId[cursor.getPosition()] = cursor.getInt(idColIndex);
+				Log.d(LOG_TAG,"TLA arrId["+cursor.getPosition()+"] = "+cursor.getInt(idColIndex));
+			}
+			while (cursor.moveToNext());
+		}
+		else Log.d(LOG_TAG,"TLA No rows in tournament?!");
+		this.notifyDataSetChanged();
+	}
  
  public View getView(int position, View convertView, ViewGroup parent) {
 	    // используем созданные, но не используемые view	   

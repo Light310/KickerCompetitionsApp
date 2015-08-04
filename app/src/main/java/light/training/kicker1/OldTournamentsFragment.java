@@ -17,14 +17,14 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-public class OldTournamentsFragment extends Fragment /*implements LoaderCallbacks<Cursor> */ {
+public class OldTournamentsFragment extends Fragment implements LoaderCallbacks<Cursor>  {
 
 	final static String LOG_TAG = "myLogs";
 	MainActivity activity;
 	
 	ListView lvActiveTournaments;
 	//SimpleCursorAdapter trnmAdapterActive;
-	TournamentListAdapter trnmAdapterActive;
+	TournamentListAdapter trnmAdapterOld;
 	
 	final static String sqlQuery = "select rowid _id, id, name from tournaments where end_date is not null;"; 
 	
@@ -58,22 +58,22 @@ public class OldTournamentsFragment extends Fragment /*implements LoaderCallback
 		String[] from = new String[] { "id" };
 	    int[] to = new int[] { R.id.barActiveTournament };
 	    
-	    Cursor c = db.rawQuery(sqlQuery, null);
+	    //Cursor c = db.rawQuery(sqlQuery, null);
 	    
 	    //trnmAdapterActive = new SimpleCursorAdapter((Context)activity, R.layout.active_tournament_item, null, from, to, 0);
-	    trnmAdapterActive = new TournamentListAdapter((Context)activity, R.layout.active_tournament_item, c, from, to);
+		trnmAdapterOld = new TournamentListAdapter((Context)activity, R.layout.active_tournament_item, null, from, to);
 	    lvActiveTournaments = (ListView) v.findViewById(R.id.lvOldTournaments);
 	    
-	    lvActiveTournaments.setAdapter(trnmAdapterActive);
+	    lvActiveTournaments.setAdapter(trnmAdapterOld);
 	    
-	    //activity.getSupportLoaderManager().initLoader(3, null, this);
+	    activity.getSupportLoaderManager().initLoader(3, null, this);
 	}
 	/*
 	public void onLeftSwipe() {
 		activity.onClickNewTournament();
 	}*/
 	
-	/*
+
 	
 	@Override
 	  public Loader<Cursor> onCreateLoader(int id, Bundle bndl) {
@@ -83,9 +83,10 @@ public class OldTournamentsFragment extends Fragment /*implements LoaderCallback
 
 	  @Override
 	  public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		  Log.d(LOG_TAG,"onLoadFinished. id: "+loader.getId());
-		  trnmAdapterActive.swapCursor(cursor);
-		  Log.d(LOG_TAG,"On Load Finished cursor count: "+cursor.getCount());	
+		  Log.d(LOG_TAG, "onLoadFinished. id: " + loader.getId());
+		  trnmAdapterOld.swapCursor(cursor);
+		  Log.d(LOG_TAG,"On Load Finished cursor count: "+cursor.getCount());
+		  trnmAdapterOld.updateList();
 	  }
 
 	  @Override
@@ -106,11 +107,11 @@ public class OldTournamentsFragment extends Fragment /*implements LoaderCallback
 	    public Cursor loadInBackground() {	    	
 	      Cursor cursor;
 	     
-    	  Log.d(LOG_TAG,"Load in background: "+sqlQuery);
+    	  Log.d(LOG_TAG,"OTF. Load in background: "+sqlQuery);
     	  cursor = db.rawQuery(sqlQuery, null);	    	 
 	      
 	      return cursor;
 	    }   	    
 	  }	 
-	*/
+
 }

@@ -75,15 +75,15 @@ public class TournamentMainFragment extends Fragment implements LoaderCallbacks<
 		String[] from = new String[] { "id" };
 	    int[] to = new int[] { R.id.barActiveTournament };
 	    
-	    Cursor c = db.rawQuery(sqlQuery, null);
+	    //Cursor c = db.rawQuery(sqlQuery, null);
 	    
 	    //trnmAdapterActive = new SimpleCursorAdapter((Context)activity, R.layout.active_tournament_item, null, from, to, 0);
-	    trnmAdapterActive = new TournamentListAdapter((Context)activity, R.layout.active_tournament_item, c, from, to);
+	    trnmAdapterActive = new TournamentListAdapter((Context)activity, R.layout.active_tournament_item, null, from, to);
 	    lvActiveTournaments = (ListView) v.findViewById(R.id.lvActiveTournaments);
 	    
 	    lvActiveTournaments.setAdapter(trnmAdapterActive);
 	    
-	    //activity.getSupportLoaderManager().initLoader(3, null, this);
+	    activity.getSupportLoaderManager().initLoader(4, null, this);
 	}
 	
 	public void onLeftSwipe() {
@@ -102,7 +102,8 @@ public class TournamentMainFragment extends Fragment implements LoaderCallbacks<
 	  public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		  Log.d(LOG_TAG,"onLoadFinished. id: "+loader.getId());
 		  trnmAdapterActive.swapCursor(cursor);
-		  Log.d(LOG_TAG,"On Load Finished cursor count: "+cursor.getCount());	
+		  Log.d(LOG_TAG,"On Load Finished cursor count: "+cursor.getCount());
+		  trnmAdapterActive.updateList();
 	  }
 
 	  @Override
