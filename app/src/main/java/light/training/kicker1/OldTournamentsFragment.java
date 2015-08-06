@@ -50,8 +50,8 @@ public class OldTournamentsFragment extends Fragment implements LoaderCallbacks<
 	@Override
 	public void onResume() {
 		super.onResume();
-		//activity.getSupportLoaderManager().getLoader(3).forceLoad();
-		//trnmAdapterActive.notifyDataSetChanged();
+		activity.getSupportLoaderManager().getLoader(3).forceLoad();
+		trnmAdapterOld.notifyDataSetChanged();
 	}
 	
 	public void showOldTournaments() {

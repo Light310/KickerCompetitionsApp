@@ -67,8 +67,9 @@ public class TournamentMainFragment extends Fragment implements LoaderCallbacks<
 	@Override
 	public void onResume() {
 		super.onResume();
-		//activity.getSupportLoaderManager().getLoader(3).forceLoad();
-		//trnmAdapterActive.notifyDataSetChanged();
+		Log.d(LOG_TAG, "TMF. onResume");
+		activity.getSupportLoaderManager().getLoader(4).forceLoad();
+		trnmAdapterActive.notifyDataSetChanged();
 	}
 	
 	public void showActiveTournaments() {
