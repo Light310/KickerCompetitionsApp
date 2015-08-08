@@ -8,6 +8,7 @@ import android.util.Log;
 public class Tournament {
 	int id;
 	int type;
+	int games_per_match;
 	String name;
 	long start_date;
 	long end_date;

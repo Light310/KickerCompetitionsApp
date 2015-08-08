@@ -92,25 +92,32 @@ public class DB {
 	    			+ "start_date timestamp, "
 	    			+ "end_date timestamp" + ");"	
 	    		);
+			db.execSQL("create table matches ("
+					+ "id integer primary key autoincrement, "
+					+ "tournament_id integer, "
+					+ "player1_id integer, "
+					+ "player2_id integer" + ");");
 	    	db.execSQL("create table games ("
 	    			+ "id integer primary key autoincrement, "
-	    			+ "player1_id integer, "
-	    			+ "player2_id integer, "
-	    			/*+ "player1 text, "
-	    			+ "player2 text, "*/
-	    			+ "tournament_id integer, "
-	    			+ "score1 integer, "
-	    			+ "score2 integer" + ");"	
+	    			+ "match_id integer, "
+	    			+ "player1_score integer, "
+	    			+ "player2_score integer" + ");"
 	    		);
 	    	db.execSQL("create table player_x_tournament_link ("
 	    			//+ "id integer primary key autoincrement, "
 	    			+ "tournament_id integer, "	    			
 	    			+ "player_id integer" + ");"	
 	    		);
-	    	db.execSQL("create table global_variables ("
+	    	db.execSQL("create table global_variables_str ("
 	    			+ "name text, "	    			
 	    			+ "value text" + ");"	
 	    		);
+
+			db.execSQL("create table global_variables_num ("
+							+ "name text, "
+							+ "value integer" + ");"
+			);
+			db.execSQL("insert into global_variables_num values ('games_per_match',1);");
 	    }
 
 	    @Override
@@ -119,6 +126,24 @@ public class DB {
 			Log.d(LOG_TAG,"DB onUpgrade. Old version = "+oldVersion+". New version = "+newVersion);
 	    }
 	  }
+
+	public void setGVValueNum(String name, int value) {
+		mDB.execSQL("update global_variables_num set value = "+value+" where name = '"+name+"';");
+	}
+
+	public void setGVValueStr(String name, String value) {
+		mDB.execSQL("update global_variables_str set value = '"+value+"' where name = '"+name+"';");
+	}
+
+	public int getGVValueNum(String name) {
+		int result = getIntValue("select value from global_variables_num where name = '"+name+"';","value");
+		return result;
+	}
+
+	public String getGVValueStr(String name) {
+		String result = getStringValue("select value from global_variables_str where name = '"+name+"';","value");
+		return result;
+	}
 	  
 	// Используется только для гарантированно одной строки
 		public int getIntValue(String sqlText, String colName) {			

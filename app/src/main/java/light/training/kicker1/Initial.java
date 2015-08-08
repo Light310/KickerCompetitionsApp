@@ -1,7 +1,9 @@
 package light.training.kicker1;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,7 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +23,8 @@ public class Initial extends Fragment {
 	TextView tv;
 	DB db;
 	public DialogFragment addPlayerDialog;
+	public MainActivity activity;
+	String[] spinner_data = {"1","2","3","4","5"};
 	
 	final String sqlText = "select p.* from players p inner join tmp_pl_x_trnm_lnk lnk on p.id = lnk.player_id";
 
@@ -31,9 +38,35 @@ public class Initial extends Fragment {
 		
 		View v = inflater.inflate(R.layout.initial, null);
 		tv = (TextView) v.findViewById(R.id.tvPlayersList);
-		MainActivity activity = (MainActivity) getActivity();
+		activity = (MainActivity) getActivity();
 		db = activity.db;
 		onLoadUpdateList();
+
+		//spinner
+		// адаптер
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.simple_spinner_item, spinner_data);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		Spinner spinner = (Spinner) v.findViewById(R.id.spnGamesPerMatch);
+		spinner.setAdapter(adapter);
+		// заголовок
+		spinner.setPrompt("Games Per Match");
+		// выделяем элемент
+		int spinnerSelection = db.getGVValueNum("games_per_match");
+		spinner.setSelection(spinnerSelection-1);
+		// устанавливаем обработчик нажатия
+		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+									   int position, long id) {
+				// показываем позиция нажатого элемента
+				//Toast.makeText(activity.getBaseContext(), "Position = " + position, Toast.LENGTH_SHORT).show();
+				db.setGVValueNum("games_per_match", position+1);
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
+		});
 		
 		
 		
