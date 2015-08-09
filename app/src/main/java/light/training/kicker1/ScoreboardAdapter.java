@@ -143,7 +143,8 @@ public class ScoreboardAdapter extends SimpleCursorAdapter {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {		
-			}			
+			}
+			/* WTF need to change afterTextChanged to work not with tournament_id!!! */
 			@Override
 			public void afterTextChanged(Editable s) {
 				if (s.toString().equals(arrScore2[_game.ref])) {

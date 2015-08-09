@@ -44,8 +44,8 @@ public class Initial extends Fragment {
 
 		//spinner
 		// адаптер
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.simple_spinner_item, spinner_data);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.spinner_row, spinner_data);
+		adapter.setDropDownViewResource(R.layout.spinner_row);
 
 		Spinner spinner = (Spinner) v.findViewById(R.id.spnGamesPerMatch);
 		spinner.setAdapter(adapter);
@@ -90,15 +90,15 @@ public class Initial extends Fragment {
 				startTournament();
 			}
 		});
-		
+		/*
 		Button btnContinueTournament = (Button) v.findViewById(R.id.continueTournamentButton);
 		btnContinueTournament.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				continueTournament();
 			}
-		});
+		});*/
 				
 		
 	    return v;
@@ -117,12 +117,12 @@ public class Initial extends Fragment {
 	  		activity.onClkStartTournament("new", 0);
 	  	}
 	}
-	
+	/*
 	public void continueTournament() {
 		MainActivity activity = (MainActivity) getActivity();
 		int tournament_id = db.getIntValue("select max(id) as id from tournaments", "id");
 	    activity.onClkStartTournament("load", tournament_id);
-	}
+	}*/
 	
 	public void onLoadUpdateList() {
 		  	 

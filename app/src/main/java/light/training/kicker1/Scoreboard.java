@@ -39,27 +39,36 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 	ScoreboardAdapter scAdapter;
 	SimpleCursorAdapter scAdapterRes;
 	LinearLayout layoutTournament;		
-	
+	/*
 	final static String sqlQuery = "select t.rowid as _id, p1.name as player1, p2.name as player2, score1, score2 " +
 			"from tournament t " +
 			"left join (select pl1.* from players pl1 " +
-			//"inner join tmp_pl_x_trnm_lnk lnk on pl1.id = lnk.player_id" +
 			") p1 " +
 			"on t.player1_id = p1.id " +
 			"left join (select pl2.* from players pl2 " +
-			//"inner join tmp_pl_x_trnm_lnk lnk on pl2.id = lnk.player_id" +
 			") p2 " +
-			"on t.player2_id = p2.id";
-	
-	/*active_players надо заменить на pl_x_trnm_lnk*/
+			"on t.player2_id = p2.id";*/
+
+	/* WTF just a dummy for matches with 1 game, should be replaced after */
+	final static String sqlQuery = "select t.rowid as _id, p1.name as player1, p2.name as player2, g.player1_score as score1, g.player2_score as score2 " +
+			"from tournament t " +
+			"left join (select pl1.* from players pl1 " +
+			") p1 " +
+			"on t.player1_id = p1.id " +
+			"left join (select pl2.* from players pl2 " +
+			") p2 " +
+			"on t.player2_id = p2.id " +
+			"left join (select * from games) g " +
+			"on t.id = g.match_id;";
+
+	final static String sqlResultsQuery = "select player_id as name, rowid as _id, games, wins as won, losses as lost, draws as draw, goals, missed, score, delta from results;";
+	/*
 	final static String sqlResultsQuery = "select name, _id, games, won, lost, draw, goals, missed, " +
 			"(3*coalesce(won,0) + coalesce(draw,0)) as score, goals-missed as delta from" +
 			"(select p.name, p.rowid _id, 0 as score, " +
 			"ga.games as games, wo.won as won, lo.lost as lost, dr.draw as draw, " +
 			"go.goals as goals, mi.missed as missed, 0 as delta " +
-			//"from active_players p " +
 			"from players p "+
-			//"inner join (select player_id from player_x_tournament_link where  "+
 			"inner join tmp_pl_x_trnm_lnk lnk on p.id = lnk.player_id "+
 			"left join (" +
 			"select player1_id as name, sum(sum) as goals from (" +
@@ -102,7 +111,7 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 			"union all select player2_id as player1_id, count(*) as games2, 0 as games1 from tournament " +
 			"where score1 is not null and score1!='' and score2 is not null and score2!='' group by player2_id " +
 			") c group by player1_id) ga " +
-			"on ga.name = p.id ) lol order by score desc, delta desc;";
+			"on ga.name = p.id ) lol order by score desc, delta desc;";*/
 	
 	
 	
@@ -199,40 +208,30 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 	
 	public void reloadDataForResults() {
 		Log.d(LOG_TAG, "SC reloadDataForResults started");
-			
-		/*DB db = new DB(activity);
-		db.open();*/
-		/* WTF Вот здесь нужен будет джоин */
+
+		/* WTF just a dummy for a match with 1 game, will need more processing for more matches */
 		for(int i=0;i<scAdapter.count;i++) {
-			 //Log.d("results", "Res: "+scAdapter.arrPlayer1[i]+" "+scAdapter.arrScore1[i]+" : "+scAdapter.arrScore2[i]+" "+scAdapter.arrPlayer2[i]);
+			 Log.d("results", "Res: "+scAdapter.arrPlayer1[i]+" "+scAdapter.arrScore1[i]+" : "+scAdapter.arrScore2[i]+" "+scAdapter.arrPlayer2[i]);
 				int player1_id = db.getIntValue("select id from players where name = '"+scAdapter.arrPlayer1[i]+"';", "id");
 				int player2_id = db.getIntValue("select id from players where name = '"+scAdapter.arrPlayer2[i]+"';", "id");
-			    /*String sqlText1 = "update games set score2 ='"+scAdapter.arrScore2[i]+"' where player1_id = "+
-				 		scAdapter.arrPlayer1[i]+" and player2_id = "+scAdapter.arrPlayer2[i]+" and tournament_id = "+tournament_id+";";*/
 				String sqlText1 = "update games set score2 ='"+scAdapter.arrScore2[i]+"' where player1_id = "+
-						player1_id+" and player2_id = "+player2_id+" and tournament_id = "+tournament_id+";";
+						player1_id+" and player2_id = "+player2_id+" and match_id in (select id from matches where tournament_id = "+tournament_id+");";
+				/*String sqlText1 = "update games set score2 ='"+scAdapter.arrScore2[i]+"' where player1_id = "+
+						player1_id+" and player2_id = "+player2_id+" and tournament_id = "+tournament_id+";";*/
 			    Log.d(LOG_TAG,"SC "+sqlText1);
 		        db.execSQL(sqlText1);
+				String sqlText2 = "update games set score1 ='"+scAdapter.arrScore1[i]+"' where player1_id = "+
+						player1_id+" and player2_id = "+player2_id+" and match_id in (select id from matches where tournament_id = "+tournament_id+");";
 		        /*String sqlText2 = "update games set score1 ='"+scAdapter.arrScore1[i]+"' where player1_id = "+
-				 		scAdapter.arrPlayer1[i]+" and player2_id = "+scAdapter.arrPlayer2[i]+" and tournament_id = "+tournament_id+";";*/
-		        String sqlText2 = "update games set score1 ='"+scAdapter.arrScore1[i]+"' where player1_id = "+
-		        		player1_id+" and player2_id = "+player2_id+" and tournament_id = "+tournament_id+";";
+		        		player1_id+" and player2_id = "+player2_id+" and tournament_id = "+tournament_id+";";*/
 		        db.execSQL(sqlText2);
 		 }
-		//db.close();	
 	}
 	
 	public void requeryLoader(int id) {
-		Log.d(LOG_TAG, "SC requery loader "+id);
+		Log.d(LOG_TAG, "SC requery loader " + id);
 		try {
 		activity.getSupportLoaderManager().getLoader(id).forceLoad();
-			/*if (id == 0) {
-				Log.d(LOG_TAG, "SC scAdapter NotifyingDataSetChanged");
-				scAdapter.notifyDataSetChanged();
-			} else if (id == 1) {
-				Log.d(LOG_TAG, "SC scAdapterRes NotifyingDataSetChanged");
-				scAdapterRes.notifyDataSetChanged();
-			}*/
 		} catch (NullPointerException e) {
 			Log.d(LOG_TAG, "SC Loader "+id+" is null");
 		}
@@ -253,35 +252,20 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 		/**/
 		db.execSQL("drop table if exists tmp_games;");
 		db.execSQL("create table tmp_games ("
-				//+ "id integer primary key autoincrement, "
 				+ "player1 integer, "
 				+ "player2 integer, "
 				+ "tournament_id integer, "
 				+ "score1 integer, "
 				+ "score2 integer" + ");"	
 			);
-		/**/
-		/*db.execSQL("drop table if exists tournament;");
-		db.execSQL("create table tournament ("
-				+ "id integer primary key autoincrement, "
-				+ "player1 text, "
-				+ "player2 text, "
-				+ "score1 integer, "
-				+ "score2 integer" + ");"	
-			);
-		db.execSQL("drop table if exists tmp_tournament;");
-		db.execSQL("create table tmp_tournament ("
-				+ "player1 text, "
-				+ "player2 text);"	
-			);
-		*/
+
+
 		/*****************/
 		db.execSQL("drop table if exists players_weights;");
 		db.execSQL("create table players_weights ("
 				+ "random integer, "
 				+ "player integer" + ");"	
-			);		
-		//db.execSQL("insert into players_weights (player) select id from active_players;");
+			);
 		db.execSQL("insert into players_weights (player) select player_id from tmp_pl_x_trnm_lnk;");
 		db.execSQL("update players_weights set random = random();");
 		int[] players = new int[playersCount];
@@ -312,13 +296,13 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 			} while (j<playersCount);			
 			i++;
 		} while (i<playersCount-1);
-		Log.d(LOG_TAG,"SC insert into games (player1_id, player2_id, tournament_id) select player1, player2, "+tournament_id+" as tournament_id from tmp_games order by Random();");
-		db.execSQL("insert into games (player1_id, player2_id, tournament_id) select player1, player2, "+tournament_id+" as tournament_id from tmp_games order by Random();");
-		
-		Log.d(LOG_TAG, "SC Rows in tournament:");
-		//Cursor c = db.getTableData("tournament");
-		Log.d(LOG_TAG,"SC select * from games where tournament_id = "+tournament_id);
-		Cursor c = db.rawQuery("select * from games where tournament_id = "+tournament_id, null);
+		Log.d(LOG_TAG, "SC insert into matches (player1_id, player2_id, tournament_id) select player1, player2, " + tournament_id + " as tournament_id from tmp_games order by Random();");
+		db.execSQL("insert into matches (player1_id, player2_id, tournament_id) select player1, player2, " + tournament_id + " as tournament_id from tmp_games order by Random();");
+		Log.d(LOG_TAG, "SC insert into games (match_id) select id from matches where tournament_id = " + tournament_id + ";");
+		db.execSQL("insert into games (match_id) select id from matches where tournament_id = " + tournament_id + ";");
+/*
+		Log.d(LOG_TAG,"SC select m.id, m.player1_id, m.player2_id, g.player1_score as score1, g.player2_score as score2 from (select * from matches where tournament_id = "+tournament_id+") m left join games g on m.id = g.match_id;");
+		Cursor c = db.rawQuery("select m.id, m.player1_id, m.player2_id, g.player1_score as score1, g.player2_score as score2 from (select * from matches where tournament_id = "+tournament_id+") m left join games g on m.id = g.match_id;", null);
 
 		if (c.moveToFirst()) {
 			int idColIndex = c.getColumnIndex("id");
@@ -337,7 +321,7 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 			while (c.moveToNext());
 		}
 		else Log.d(LOG_TAG, "SC 0 rows");
-		c.close();			
+		c.close();			*/
 			
 		//db.execSQL("drop table if exists players_weights;");
 		//db.execSQL("drop table if exists tournament;");

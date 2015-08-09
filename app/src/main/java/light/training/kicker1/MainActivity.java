@@ -169,8 +169,8 @@ public class MainActivity extends FragmentActivity {
   
   public void prepareScoreboard(int tournament_id) {
 		Log.d(LOG_TAG,"MA Prepare Scoreboard");		
-		db.execSQL("drop view if exists tournament;");
-		db.execSQL("create view tournament as select * from games where tournament_id = "+tournament_id+";");		
+		db.execSQL("delete from tournament;");
+		db.execSQL("insert into tournament select * from matches where tournament_id = "+tournament_id+";");
 	}
     
   	protected void onDestroy() {

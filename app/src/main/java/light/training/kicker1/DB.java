@@ -89,6 +89,7 @@ public class DB {
 	    			+ "id integer primary key autoincrement, "
 	    			+ "name text, "
 	    			+ "type integer, "
+					+ "games_per_match int, "
 	    			+ "start_date timestamp, "
 	    			+ "end_date timestamp" + ");"	
 	    		);
@@ -108,6 +109,56 @@ public class DB {
 	    			+ "tournament_id integer, "	    			
 	    			+ "player_id integer" + ");"	
 	    		);
+
+			/* Views for scoreboard */
+			db.execSQL("create table tournament as select * from matches;");
+
+			db.execSQL(
+			"create table tmp_match_ext_view as "
+			+ "select m.id as match_id, player1_id, player2_id, "
+			+ "case when ((won1>won2) or (won1=won2 and goals1>goals2)) then 3 "
+			+ "when (won1=won2 and goals1=goals2) then 1 "
+			+ "else 0 end as player1_score, "
+			+ "case when ((won1>won2) or (won1=won2 and goals1>goals2)) then 1 "
+			+ "else 0 end as player1_wins, "
+			+ "case when ((won1<won2) or (won1=won2 and goals1<goals2)) then 1 "
+			+ "else 0 end as player1_lost, "
+			+ "case when ((won1<won2) or (won1=won2 and goals1<goals2)) then 3 "
+			+ "when (won1=won2 and goals1=goals2) then 1 "
+			+ "else 0 end as player2_score, "
+			+ "case when ((won1<won2) or (won1=won2 and goals1<goals2)) then 1 "
+			+ "else 0 end as player2_wins, "
+			+ "case when ((won1>won2) or (won1=won2 and goals1>goals2)) then 1 "
+			+ "else 0 end as player2_lost, "
+			+ "case when (won1=won2 and goals1=goals2) then 1 "
+			+ "else 0 end as draws, "
+			+ "		goals1 as player1_goals, "
+			+ "goals2 as player2_goals "
+			+ "		from "
+			+ "(select * from tournament) m "
+			+ "left join "
+			+ "(select match_id, count(*) as won1 from games where player1_score>player2_score group by match_id) w1 "
+			+ "on m.id = w1.match_id "
+			+ "left join "
+			+ "(select match_id, count(*) as won2 from games where player2_score>player1_score group by match_id) w2 "
+			+ "on m.id = w2.match_id "
+			+ "left join "
+			+ "(select match_id, sum(player1_score) as goals1, sum(player2_score) as goals2 from games group by match_id) g "
+			+ "on m.id = g.match_id;");
+
+			db.execSQL("create view tmp_players as select player1_id from matches union select player2_id from tournament");
+
+			db.execSQL(
+			"create table results as "
+			+ "select player_id, sum(score) as score, sum(wins)+sum(lost)+sum(draws) as games, sum(wins) as wins, "
+			+ "sum(lost) as losses, sum(draws) as draws, sum(goals) as goals, sum(missed) as missed, sum(goals)-sum(missed) as delta from "
+			+ "(select player1_id as player_id, sum(player1_score) as score, sum(player1_wins) as wins, "
+			+ "sum(player1_lost) as lost, sum(draws) as draws, sum(player1_goals) as goals, sum(player2_goals) as missed from tmp_match_ext_view group by player1_id "
+			+ "union all "
+			+ "select player2_id as player_id, sum(player2_score) as score, sum(player2_wins) as wins, "
+			+ "sum(player2_lost) as lost, sum(draws) as draws, sum(player2_goals) as goals, sum(player1_goals) as missed from tmp_match_ext_view group by player2_id) a group by player_id;");
+
+			/* Global Variables*/
 	    	db.execSQL("create table global_variables_str ("
 	    			+ "name text, "	    			
 	    			+ "value text" + ");"	
@@ -128,19 +179,23 @@ public class DB {
 	  }
 
 	public void setGVValueNum(String name, int value) {
+		Log.d(LOG_TAG,"DB. setGVValueNum. update global_variables_num set value = "+value+" where name = '"+name+"';");
 		mDB.execSQL("update global_variables_num set value = "+value+" where name = '"+name+"';");
 	}
 
 	public void setGVValueStr(String name, String value) {
+		Log.d(LOG_TAG,"DB. setGVValueStr. update global_variables_str set value = '"+value+"' where name = '"+name+"';");
 		mDB.execSQL("update global_variables_str set value = '"+value+"' where name = '"+name+"';");
 	}
 
 	public int getGVValueNum(String name) {
+		Log.d(LOG_TAG,"DB. getGVValueNum. select value from global_variables_num where name = '"+name+"';");
 		int result = getIntValue("select value from global_variables_num where name = '"+name+"';","value");
 		return result;
 	}
 
 	public String getGVValueStr(String name) {
+		Log.d(LOG_TAG,"DB. getGVValueStr. select value from global_variables_str where name = '"+name+"';");
 		String result = getStringValue("select value from global_variables_str where name = '"+name+"';","value");
 		return result;
 	}
