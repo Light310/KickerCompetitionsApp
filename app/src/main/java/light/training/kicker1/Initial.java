@@ -45,6 +45,7 @@ public class Initial extends Fragment {
 		//spinner
 		// адаптер
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.spinner_row, spinner_data);
+		//ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_item, spinner_data);
 		adapter.setDropDownViewResource(R.layout.spinner_row);
 
 		Spinner spinner = (Spinner) v.findViewById(R.id.spnGamesPerMatch);
