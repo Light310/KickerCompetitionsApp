@@ -149,7 +149,24 @@ public class MainActivity extends FragmentActivity {
 			while (c.moveToNext());
 		}
 		else Log.d(LOG_TAG, "MA printLink 0 rows");
-		c.close();			
+		c.close();
+	  c = db.rawQuery("select * from tournament;", null);
+	  if (c.moveToFirst()) {
+		  int idColIndex = c.getColumnIndex("id");
+		  int tournament_idColIndex = c.getColumnIndex("tournament_id");
+		  int player1_idColIndex = c.getColumnIndex("player1_id");
+		  int player2_idColIndex = c.getColumnIndex("player2_id");
+		  do {
+			  Log.d(LOG_TAG,
+					  "MA. player1_id = " + c.getInt(player1_idColIndex) +
+							  ", player2_id = " + c.getInt(player2_idColIndex) +
+							  ", id = " + c.getInt(idColIndex) +
+							  ", tournament_id = " + c.getInt(tournament_idColIndex));
+		  }
+		  while (c.moveToNext());
+	  }
+	  else Log.d(LOG_TAG, "0 rows");
+	  c.close();
   }
   
   public void getPlayerXTournamentLink(int tournament_id, String mode){

@@ -61,7 +61,7 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 			"left join (select * from games) g " +
 			"on t.id = g.match_id;";
 
-	final static String sqlResultsQuery = "select player_id as name, rowid as _id, games, wins as won, losses as lost, draws as draw, goals, missed, score, delta from results;";
+	final static String sqlResultsQuery = "select player_id as name, rowid as _id, games, wins as won, losses as lost, draws as draw, goals, missed, score, delta from results order by score desc, delta desc;";
 	/*
 	final static String sqlResultsQuery = "select name, _id, games, won, lost, draw, goals, missed, " +
 			"(3*coalesce(won,0) + coalesce(draw,0)) as score, goals-missed as delta from" +
@@ -214,14 +214,12 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 			 Log.d("results", "Res: "+scAdapter.arrPlayer1[i]+" "+scAdapter.arrScore1[i]+" : "+scAdapter.arrScore2[i]+" "+scAdapter.arrPlayer2[i]);
 				int player1_id = db.getIntValue("select id from players where name = '"+scAdapter.arrPlayer1[i]+"';", "id");
 				int player2_id = db.getIntValue("select id from players where name = '"+scAdapter.arrPlayer2[i]+"';", "id");
-				String sqlText1 = "update games set score2 ='"+scAdapter.arrScore2[i]+"' where player1_id = "+
-						player1_id+" and player2_id = "+player2_id+" and match_id in (select id from matches where tournament_id = "+tournament_id+");";
+				String sqlText1 = "update games set player2_score ='"+scAdapter.arrScore2[i]+"' where match_id in (select id from matches where tournament_id = "+tournament_id+");";
 				/*String sqlText1 = "update games set score2 ='"+scAdapter.arrScore2[i]+"' where player1_id = "+
 						player1_id+" and player2_id = "+player2_id+" and tournament_id = "+tournament_id+";";*/
 			    Log.d(LOG_TAG,"SC "+sqlText1);
 		        db.execSQL(sqlText1);
-				String sqlText2 = "update games set score1 ='"+scAdapter.arrScore1[i]+"' where player1_id = "+
-						player1_id+" and player2_id = "+player2_id+" and match_id in (select id from matches where tournament_id = "+tournament_id+");";
+				String sqlText2 = "update games set player1_score ='"+scAdapter.arrScore1[i]+"' where match_id in (select id from matches where tournament_id = "+tournament_id+");";
 		        /*String sqlText2 = "update games set score1 ='"+scAdapter.arrScore1[i]+"' where player1_id = "+
 		        		player1_id+" and player2_id = "+player2_id+" and tournament_id = "+tournament_id+";";*/
 		        db.execSQL(sqlText2);
@@ -300,6 +298,7 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 		db.execSQL("insert into matches (player1_id, player2_id, tournament_id) select player1, player2, " + tournament_id + " as tournament_id from tmp_games order by Random();");
 		Log.d(LOG_TAG, "SC insert into games (match_id) select id from matches where tournament_id = " + tournament_id + ";");
 		db.execSQL("insert into games (match_id) select id from matches where tournament_id = " + tournament_id + ";");
+		db.execSQL("insert into tournament select * from matches where tournament_id = "+tournament_id+";");
 /*
 		Log.d(LOG_TAG,"SC select m.id, m.player1_id, m.player2_id, g.player1_score as score1, g.player2_score as score2 from (select * from matches where tournament_id = "+tournament_id+") m left join games g on m.id = g.match_id;");
 		Cursor c = db.rawQuery("select m.id, m.player1_id, m.player2_id, g.player1_score as score1, g.player2_score as score2 from (select * from matches where tournament_id = "+tournament_id+") m left join games g on m.id = g.match_id;", null);
@@ -333,7 +332,8 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 	}
 	
 	public void checkAndFinishTournament() {
-		int count = db.getIntValue("select count(*) as cnt from tournament where score1 = '' or score1 is null or score2 = '' or score2 is null;", "cnt");
+		//int count = db.getIntValue("select count(*) as cnt from tournament where score1 = '' or score1 is null or score2 = '' or score2 is null;", "cnt");
+		int count = db.getIntValue("select count(*) as cnt from tournament t left join games g on t.id = g.match_id where g.player1_score = '' or g.player1_score is null or g.player2_score = '' or g.player2_score is null;", "cnt");
 
 		Log.d(LOG_TAG,"SC checkAndFinishTournament count = "+count);
 		if (count == 0) {
@@ -402,19 +402,22 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 	      
 	      Cursor cursor;
 	      if (this.getId()==0) {	    	  
-	    	  Log.d(LOG_TAG,"Load in background: "+sqlQuery);
+	    	  Log.d(LOG_TAG,"SC: Draw. Load in background: "+sqlQuery);
 	    	  cursor = db.rawQuery(sqlQuery, null);
-	    	  //Log.d(LOG_TAG,"Load in background cursor count: "+cursor.getCount());
-	    	  
-	    	  /*
+/*
+	    	  Log.d(LOG_TAG,"Load in background cursor count: "+cursor.getCount());
 	    	  Cursor c = db.rawQuery("select * from tournament;", null);
 	    	  if (c.moveToFirst()) {
+				    int idColIndex = c.getColumnIndex("id");
+				    int tournament_idColIndex = c.getColumnIndex("tournament_id");
 		  			int player1_idColIndex = c.getColumnIndex("player1_id");
 		  			int player2_idColIndex = c.getColumnIndex("player2_id");			
 		  			do {
 		  			Log.d(LOG_TAG,
 		  				"SC. player1_id = " + c.getInt(player1_idColIndex) +
-		  				", player2_id = " + c.getInt(player2_idColIndex));
+		  				", player2_id = " + c.getInt(player2_idColIndex) +
+						", id = " + c.getInt(idColIndex) +
+						", tournament_id = " + c.getInt(tournament_idColIndex));
 		  			}
 		  			while (c.moveToNext());
 		  		}
@@ -445,11 +448,11 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 			  			while (c.moveToNext());
 			  		}
 			  		else Log.d(LOG_TAG, "0 rows");
-			  		c.close();	*/
-	    	  
+			  		c.close();
+	    	  */
 	    	  
 	      } else {
-	    	  Log.d(LOG_TAG,"Load in background: "+sqlResultsQuery);
+	    	  Log.d(LOG_TAG,"SC: Results. Load in background: "+sqlResultsQuery);
 	    	  cursor = db.rawQuery(sqlResultsQuery, null);
 	      }
 	      

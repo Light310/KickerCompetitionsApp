@@ -114,23 +114,23 @@ public class DB {
 			db.execSQL("create table tournament as select * from matches;");
 
 			db.execSQL(
-			"create table tmp_match_ext_view as "
+			"create view tmp_match_ext_view as "
 			+ "select m.id as match_id, player1_id, player2_id, "
-			+ "case when ((won1>won2) or (won1=won2 and goals1>goals2)) then 3 "
-			+ "when (won1=won2 and goals1=goals2) then 1 "
+			+ "case when ((coalesce(won1,0)>coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1>goals2)) then 3 "
+			+ "when (coalesce(won1,0)=coalesce(won2,0) and goals1=goals2) then 1 "
 			+ "else 0 end as player1_score, "
-			+ "case when ((won1>won2) or (won1=won2 and goals1>goals2)) then 1 "
+			+ "case when ((coalesce(won1,0)>coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1>goals2)) then 1 "
 			+ "else 0 end as player1_wins, "
-			+ "case when ((won1<won2) or (won1=won2 and goals1<goals2)) then 1 "
+			+ "case when ((coalesce(won1,0)<coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1<goals2)) then 1 "
 			+ "else 0 end as player1_lost, "
-			+ "case when ((won1<won2) or (won1=won2 and goals1<goals2)) then 3 "
-			+ "when (won1=won2 and goals1=goals2) then 1 "
+			+ "case when ((coalesce(won1,0)<coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1<goals2)) then 3 "
+			+ "when (coalesce(won1,0)=coalesce(won2,0) and goals1=goals2) then 1 "
 			+ "else 0 end as player2_score, "
-			+ "case when ((won1<won2) or (won1=won2 and goals1<goals2)) then 1 "
+			+ "case when ((coalesce(won1,0)<coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1<goals2)) then 1 "
 			+ "else 0 end as player2_wins, "
-			+ "case when ((won1>won2) or (won1=won2 and goals1>goals2)) then 1 "
+			+ "case when ((coalesce(won1,0)>coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1>goals2)) then 1 "
 			+ "else 0 end as player2_lost, "
-			+ "case when (won1=won2 and goals1=goals2) then 1 "
+			+ "case when (coalesce(won1,0)=coalesce(won2,0) and goals1=goals2) then 1 "
 			+ "else 0 end as draws, "
 			+ "		goals1 as player1_goals, "
 			+ "goals2 as player2_goals "
@@ -149,7 +149,7 @@ public class DB {
 			db.execSQL("create view tmp_players as select player1_id from matches union select player2_id from tournament");
 
 			db.execSQL(
-			"create table results as "
+			"create view results as "
 			+ "select player_id, sum(score) as score, sum(wins)+sum(lost)+sum(draws) as games, sum(wins) as wins, "
 			+ "sum(lost) as losses, sum(draws) as draws, sum(goals) as goals, sum(missed) as missed, sum(goals)-sum(missed) as delta from "
 			+ "(select player1_id as player_id, sum(player1_score) as score, sum(player1_wins) as wins, "
