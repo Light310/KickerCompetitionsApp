@@ -61,7 +61,7 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 			"left join (select * from games) g " +
 			"on t.id = g.match_id;";
 
-	final static String sqlResultsQuery = "select player_id as name, rowid as _id, games, wins as won, losses as lost, draws as draw, goals, missed, score, delta from results order by score desc, delta desc;";
+	final static String sqlResultsQuery = "select player_name as name, rowid as _id, games, wins as won, losses as lost, draws as draw, goals, missed, score, delta from results order by score desc, delta desc;";
 	/*
 	final static String sqlResultsQuery = "select name, _id, games, won, lost, draw, goals, missed, " +
 			"(3*coalesce(won,0) + coalesce(draw,0)) as score, goals-missed as delta from" +
@@ -134,6 +134,7 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 				@Override
 				public void onClick(View v) {
 					reloadDataForResults();
+					//debugTables();
 					requeryLoader(1);	
 					checkAndFinishTournament();
 				}
@@ -205,21 +206,118 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 	    // создаем лоадер для чтения данных
 	    activity.getSupportLoaderManager().initLoader(0, null, this);			
 	}
+
+	public void debugTables() {
+		Log.d(LOG_TAG, "SC: debugTables.");
+
+		Cursor c0 = db.rawQuery("select match_id, sum(coalesce(player1_score,0)) as goals1, sum(player2_score) as goals2 from games group by match_id", null);
+
+		if (c0.moveToFirst()) {
+			int match_id_ColIndex = c0.getColumnIndex("match_id");
+			int goals1_ColIndex = c0.getColumnIndex("goals1");
+			int goals2_ColIndex = c0.getColumnIndex("goals2");
+			do {
+				Log.d(LOG_TAG, "SC: debugTable0. match_id = " + c0.getInt(match_id_ColIndex)+
+						", goals1 = " + c0.getInt(goals1_ColIndex)+
+						", goals2 = " + c0.getInt(goals2_ColIndex));
+			}
+			while (c0.moveToNext());
+		}
+		else Log.d(LOG_TAG, "SC: debugTable0 0 rows");
+
+		c0.close();
+
+		Cursor c = db.rawQuery(
+				"select m.id as match_id, player1_id, player2_id, pl.played as played, "
+						+ "case when ((coalesce(won1,0)>coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1>goals2)) then 3 "
+						+ "when (coalesce(won1,0)=coalesce(won2,0) and goals1=goals2 and played>0) then 1 "
+						+ "else 0 end as player1_score, "
+						+ "case when ((coalesce(won1,0)>coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1>goals2)) then 1 "
+						+ "else 0 end as player1_wins, "
+						+ "case when ((coalesce(won1,0)<coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1<goals2)) then 1 "
+						+ "else 0 end as player1_lost, "
+						+ "case when ((coalesce(won1,0)<coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1<goals2)) then 3 "
+						+ "when (coalesce(won1,0)=coalesce(won2,0) and goals1=goals2 and played>0) then 1 "
+						+ "else 0 end as player2_score, "
+						+ "case when ((coalesce(won1,0)<coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1<goals2)) then 1 "
+						+ "else 0 end as player2_wins, "
+						+ "case when ((coalesce(won1,0)>coalesce(won2,0)) or (coalesce(won1,0)=coalesce(won2,0) and goals1>goals2)) then 1 "
+						+ "else 0 end as player2_lost, "
+						+ "case when (coalesce(won1,0)=coalesce(won2,0) "
+						+ "and goals1=goals2 and played>0) then 1 "
+						+ "else 0 end as draws, "
+						+ "		goals1 as player1_goals, "
+						+ "goals2 as player2_goals "
+						+ "		from "
+						+ "(select * from tournament) m "
+						+ "left join "
+						+ "(select match_id, count(*) as won1 from games where player1_score>player2_score group by match_id) w1 "
+						+ "on m.id = w1.match_id "
+						+ "left join "
+						+ "(select match_id, count(*) as won2 from games where player2_score>player1_score group by match_id) w2 "
+						+ "on m.id = w2.match_id "
+						+ "left join "
+						+ "(select match_id, count(*) as played from games where player1_score is not null and player1_score!='' and player2_score is not null and player2_score!='' group by match_id) pl "
+						+ "on m.id = pl.match_id "
+						+ "left join "
+						+ "(select match_id, sum(player1_score) as goals1, sum(player2_score) as goals2 from games group by match_id) g "
+						+ "on m.id = g.match_id;", null);
+		/* Print results */
+		if (c.moveToFirst()) {
+			int match_id_ColIndex = c.getColumnIndex("match_id");
+			int player1_id_ColIndex = c.getColumnIndex("player1_id");
+			int player2_id_ColIndex = c.getColumnIndex("player2_id");
+			int played_ColIndex = c.getColumnIndex("played");
+			int player1_score_ColIndex = c.getColumnIndex("player1_score");
+			int player1_wins_ColIndex = c.getColumnIndex("player1_wins");
+			int player1_lost_ColIndex = c.getColumnIndex("player1_lost");
+			int player2_score_ColIndex = c.getColumnIndex("player2_score");
+			int player2_wins_ColIndex = c.getColumnIndex("player2_wins");
+			int player2_lost_ColIndex = c.getColumnIndex("player2_lost");
+			int draws_ColIndex = c.getColumnIndex("draws");
+			int player1_goals_ColIndex = c.getColumnIndex("player1_goals");
+			int player2_goals_ColIndex = c.getColumnIndex("player2_goals");
+			do {
+				Log.d(LOG_TAG, "SC: debugTable. match_id = " + c.getInt(match_id_ColIndex)+
+							", player1_id = " + c.getInt(player1_id_ColIndex)+
+						", player2_id = " + c.getInt(player2_id_ColIndex)+
+						", played = " + c.getInt(played_ColIndex)+
+						", player1_score = " + c.getInt(player1_score_ColIndex)+
+						", player1_wins = " + c.getInt(player1_wins_ColIndex)+
+						", player1_lost = " + c.getInt(player1_lost_ColIndex)+
+						", player2_score = " + c.getInt(player2_score_ColIndex)+
+						", player2_wins = " + c.getInt(player2_wins_ColIndex)+
+						", player2_lost = " + c.getInt(player2_lost_ColIndex)+
+						", draws = " + c.getInt(draws_ColIndex)+
+						", player1_goals = " + c.getInt(player1_goals_ColIndex)+
+						", player2_goals = " + c.getInt(player2_goals_ColIndex));
+
+			}
+			while (c.moveToNext());
+		}
+		else Log.d(LOG_TAG, "SC: debugTable 0 rows");
+
+		c.close();
+	}
+
 	
 	public void reloadDataForResults() {
 		Log.d(LOG_TAG, "SC reloadDataForResults started");
 
+
 		/* WTF just a dummy for a match with 1 game, will need more processing for more matches */
 		for(int i=0;i<scAdapter.count;i++) {
-			 Log.d("results", "Res: "+scAdapter.arrPlayer1[i]+" "+scAdapter.arrScore1[i]+" : "+scAdapter.arrScore2[i]+" "+scAdapter.arrPlayer2[i]);
+			 Log.d(LOG_TAG, "SC: Res: "+scAdapter.arrPlayer1[i]+" "+scAdapter.arrScore1[i]+" : "+scAdapter.arrScore2[i]+" "+scAdapter.arrPlayer2[i]);
 				int player1_id = db.getIntValue("select id from players where name = '"+scAdapter.arrPlayer1[i]+"';", "id");
 				int player2_id = db.getIntValue("select id from players where name = '"+scAdapter.arrPlayer2[i]+"';", "id");
-				String sqlText1 = "update games set player2_score ='"+scAdapter.arrScore2[i]+"' where match_id in (select id from matches where tournament_id = "+tournament_id+");";
+				String sqlText1 = "update games set player2_score ='"+scAdapter.arrScore2[i]+"' where match_id in (select id from matches where " +
+						" player1_id = "+player1_id+" and player2_id = "+player2_id+" and tournament_id = "+tournament_id+");";
 				/*String sqlText1 = "update games set score2 ='"+scAdapter.arrScore2[i]+"' where player1_id = "+
 						player1_id+" and player2_id = "+player2_id+" and tournament_id = "+tournament_id+";";*/
 			    Log.d(LOG_TAG,"SC "+sqlText1);
 		        db.execSQL(sqlText1);
-				String sqlText2 = "update games set player1_score ='"+scAdapter.arrScore1[i]+"' where match_id in (select id from matches where tournament_id = "+tournament_id+");";
+				String sqlText2 = "update games set player1_score ='"+scAdapter.arrScore1[i]+"' where match_id in (select id from matches where " +
+						" player1_id = "+player1_id+" and player2_id = "+player2_id+" and tournament_id = "+tournament_id+");";
 		        /*String sqlText2 = "update games set score1 ='"+scAdapter.arrScore1[i]+"' where player1_id = "+
 		        		player1_id+" and player2_id = "+player2_id+" and tournament_id = "+tournament_id+";";*/
 		        db.execSQL(sqlText2);
@@ -236,16 +334,16 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 	}	
 	
 	// Делаем жеребьёвку
-	public void getDraw() {			
-  		// Get Draw
-  		//int playersCount = db.selectCount("active_players");
+	public void getDraw() {
+		// Get Draw
+		//int playersCount = db.selectCount("active_players");
 		int playersCount = db.selectCount("tmp_pl_x_trnm_lnk");
-		int matchesCount=0;
-		int tmp=playersCount-1;
+		int matchesCount = 0;
+		int tmp = playersCount - 1;
 		do {
-			matchesCount+=tmp--;			
-		} while (tmp>0);
-		Log.d(LOG_TAG, "SC Count of matches: "+matchesCount);
+			matchesCount += tmp--;
+		} while (tmp > 0);
+		Log.d(LOG_TAG, "SC Count of matches: " + matchesCount);
 		tmp = matchesCount;
 		/**/
 		db.execSQL("drop table if exists tmp_games;");
