@@ -129,6 +129,7 @@ public class MainActivity extends FragmentActivity {
 		frScoreboard.tournament_id = trn1.id;
 		frScoreboard.tournament_name = trn1.name;
 		frScoreboard.tournament_type = trn1.type;
+	    frScoreboard.games_per_match = trn1.games_per_match;
 		prepareScoreboard(trn1.id);
 		printLink();
 		fTrans.add(R.id.frScoreboard, frScoreboard);
