@@ -46,13 +46,16 @@ public class DB {
 	  }
 	  
 	  public void execSQL(String sqlQuery) {
-		   if (prevSql.equals(sqlQuery)) {
+		   /*if (prevSql.equals(sqlQuery)) {
 		    	Log.d(LOG_TAG,"DB: Dublicate query, aborting: "+sqlQuery);
-		    } else {
+		    } else {*/
+		        if (prevSql.equals(sqlQuery)) {
+					Log.d(LOG_TAG, "DB: Dublicate query, NOT aborting: " + sqlQuery);
+				}
 			    mDB.execSQL(sqlQuery);
-			    prevSql = new String (sqlQuery);
+		  		prevSql = new String (sqlQuery);
 			    Log.d(LOG_TAG, "DB: "+sqlQuery);
-		    }
+		    //}
 		  }
 	  
 	  public int clearTable(String table) {
@@ -101,6 +104,7 @@ public class DB {
 	    	db.execSQL("create table games ("
 	    			+ "id integer primary key autoincrement, "
 	    			+ "match_id integer, "
+					+ "game_number integer, "
 	    			+ "player1_score integer, "
 	    			+ "player2_score integer" + ");"
 	    		);

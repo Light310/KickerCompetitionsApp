@@ -134,7 +134,7 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 				@Override
 				public void onClick(View v) {
 					reloadDataForResults();
-					//debugTables();
+					debugTables();
 					requeryLoader(1);	
 					checkAndFinishTournament();
 				}
@@ -226,6 +226,23 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 		else Log.d(LOG_TAG, "SC: debugTable0 0 rows");
 
 		c0.close();
+
+		Cursor c1 = db.rawQuery("select match_id, player1_score as goals1, player2_score as goals2 from games;", null);
+
+		if (c1.moveToFirst()) {
+			int match_id_ColIndex = c1.getColumnIndex("match_id");
+			int goals1_ColIndex = c1.getColumnIndex("goals1");
+			int goals2_ColIndex = c1.getColumnIndex("goals2");
+			do {
+				Log.d(LOG_TAG, "SC: debugTable1. match_id = " + c1.getInt(match_id_ColIndex)+
+						", goals1 = " + c1.getInt(goals1_ColIndex)+
+						", goals2 = " + c1.getInt(goals2_ColIndex));
+			}
+			while (c1.moveToNext());
+		}
+		else Log.d(LOG_TAG, "SC: debugTable1 0 rows");
+
+		c1.close();
 
 		Cursor c = db.rawQuery(
 				"select m.id as match_id, player1_id, player2_id, pl.played as played, "
@@ -392,10 +409,12 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 			} while (j<playersCount);			
 			i++;
 		} while (i<playersCount-1);
-		Log.d(LOG_TAG, "SC insert into matches (player1_id, player2_id, tournament_id) select player1, player2, " + tournament_id + " as tournament_id from tmp_games order by Random();");
+		//Log.d(LOG_TAG, "SC insert into matches (player1_id, player2_id, tournament_id) select player1, player2, " + tournament_id + " as tournament_id from tmp_games order by Random();");
 		db.execSQL("insert into matches (player1_id, player2_id, tournament_id) select player1, player2, " + tournament_id + " as tournament_id from tmp_games order by Random();");
-		Log.d(LOG_TAG, "SC insert into games (match_id) select id from matches where tournament_id = " + tournament_id + ";");
-		db.execSQL("insert into games (match_id) select id from matches where tournament_id = " + tournament_id + ";");
+		//Log.d(LOG_TAG, "SC insert into games (match_id) select id from matches where tournament_id = " + tournament_id + ";");
+		for (int gpm=1; gpm<=games_per_match; gpm++){
+			db.execSQL("insert into games (match_id, game_number) select id, "+ gpm+" as game_number from matches where tournament_id = " + tournament_id + ";");
+		}
 		db.execSQL("insert into tournament select * from matches where tournament_id = "+tournament_id+";");
 /*
 		Log.d(LOG_TAG,"SC select m.id, m.player1_id, m.player2_id, g.player1_score as score1, g.player2_score as score2 from (select * from matches where tournament_id = "+tournament_id+") m left join games g on m.id = g.match_id;");
