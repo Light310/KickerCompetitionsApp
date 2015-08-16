@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 	
-	int tournament_id, tournament_type;
+	int tournament_id, tournament_type, games_per_match;
 	String tournament_name;
 	
 	final static String LOG_TAG = "myLogs";
@@ -153,12 +153,14 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 	}
 	
 	public void initialize() {
+		Log.d(LOG_TAG,"SC: initializing. GPM = "+games_per_match);
 		if (db.selectCount("tournament")==0) {
 			Log.d(LOG_TAG,"SC No tournament found, getting draw");
 			getDraw();
 		} else {
 			Log.d(LOG_TAG,"SC found tournament");
 		}
+
 		printResults();
 		printDraw();
 	}
@@ -166,9 +168,7 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 	public void printResults() {
 		String[] from = new String[] { "name", "score", "games", "won", "lost", "draw", "goals", "missed", "delta" };
 	    int[] to = new int[] { R.id.tvResultsPlayer, R.id.tvResultsScores, R.id.tvResultsGames, R.id.tvResultsWon, R.id.tvResultsLost, R.id.tvResultsDraw, R.id.tvResultsGoals, R.id.tvResultsMissed, R.id.tvResultsDelta };
-	    
-	    /*Cursor c = db.rawQuery(sqlResultsQuery,null);
-	    Log.d(LOG_TAG,"Count = "+c.getCount());*/
+
 	    scAdapterRes = new SimpleCursorAdapter((Context)activity, R.layout.results_item, null, from, to, 0);
 	    lvResult = (ListView) v.findViewById(R.id.lvResults);
 	    lvResult.addHeaderView(createHeader(), null, false);
@@ -193,7 +193,7 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 	    }
 		
 	public void printDraw() {
-		
+		/* Here should be branching for different ammount of games per match */
 		// формируем столбцы сопоставления
 		String[] from = new String[] { "player1", "player2", "score1", "score2" };
 	    int[] to = new int[] { R.id.tvDrawPlayer1, R.id.tvDrawPlayer2, R.id.etPlayer1Score, R.id.etPlayer2Score };
@@ -336,7 +336,7 @@ public class Scoreboard extends Fragment implements LoaderCallbacks<Cursor> {
 	// Делаем жеребьёвку
 	public void getDraw() {
 		// Get Draw
-		//int playersCount = db.selectCount("active_players");
+		// Here must be branching for gpm too
 		int playersCount = db.selectCount("tmp_pl_x_trnm_lnk");
 		int matchesCount = 0;
 		int tmp = playersCount - 1;
